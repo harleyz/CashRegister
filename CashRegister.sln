@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashRegister", "CashRegister\CashRegister.csproj", "{C5C9576B-92B9-44F6-ADB7-68FA9E218D40}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CashRegisterDB", "C:\Users\harle\Documents\Visual Studio 2017\Projects\CashRegisterDB\CashRegisterDB.sqlproj", "{24B34332-0C5A-45CB-9A92-791D2F7961A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,8 +17,17 @@ Global
 		{C5C9576B-92B9-44F6-ADB7-68FA9E218D40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5C9576B-92B9-44F6-ADB7-68FA9E218D40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5C9576B-92B9-44F6-ADB7-68FA9E218D40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24B34332-0C5A-45CB-9A92-791D2F7961A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24B34332-0C5A-45CB-9A92-791D2F7961A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24B34332-0C5A-45CB-9A92-791D2F7961A2}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{24B34332-0C5A-45CB-9A92-791D2F7961A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24B34332-0C5A-45CB-9A92-791D2F7961A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24B34332-0C5A-45CB-9A92-791D2F7961A2}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7ABD2926-AB58-45EC-A4B8-49DE2F1BAD00}
 	EndGlobalSection
 EndGlobal
