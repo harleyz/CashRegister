@@ -19,8 +19,85 @@ namespace CashRegister
 {
     class Program
     {
+        const string errormsg = "Unable to parse command, please type HELP for assistance.";
+
         static void Main(string[] args)
         {
+            Console.WriteLine("Welcome to cash register, type help for assistance.");
+
+            while (true)
+            {
+                string input = Console.ReadLine();
+
+                input = input.ToUpper();
+
+                switch (input)
+                {
+                    case "EXIT":
+                        {
+                            return;
+                        }
+                    case "HELP":
+                        {
+                            Console.WriteLine("- enter EXIT to exit this application");
+                            Console.WriteLine("- enter CLS to clear the screen");
+                            Console.WriteLine("- enter BEGIN to begin a new transaction");
+                            Console.WriteLine("- enter RECEIPT to view the receipt");
+                            Console.WriteLine("- enter END to finish the transaction");
+                            break;
+                        }
+                    case "CLS":
+                        {
+                            Console.Clear();
+                            break;
+                        }
+
+                    case "BEGIN":
+                        {
+                            try
+                            {
+                                Console.WriteLine(input);
+                            }
+                            catch
+                            {
+                                Console.WriteLine(errormsg);
+                            }
+
+                            break;
+                        }
+                    case "RECEIPT":
+                        {
+                            try
+                            {
+                                Console.WriteLine(input);
+                            }
+                            catch
+                            {
+                                Console.WriteLine(errormsg);
+                            }
+
+                            break;
+                        }
+                    case "END":
+                        {
+                            try
+                            {
+                                Console.WriteLine(input);
+                            }
+                            catch
+                            {
+                                Console.WriteLine(errormsg);
+                            }
+
+                            break;
+                        }
+                    default:
+                        {
+                            Console.WriteLine(errormsg);
+                            break;
+                        }
+                }
+            }
         }
     }
 }
