@@ -12,19 +12,20 @@ namespace CashRegister.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Register
+    public partial class Receipt
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Register()
+        public Receipt()
         {
-            this.Receipts = new HashSet<Receipt>();
+            this.Transactions = new HashSet<Transaction>();
         }
     
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Location { get; set; }
+        public int RegisterId { get; set; }
+        public System.DateTime Time { get; set; }
     
+        public virtual Register Register { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Receipt> Receipts { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }

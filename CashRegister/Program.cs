@@ -24,9 +24,8 @@ namespace CashRegister
 
         static void Main(string[] args)
         {
-            ItemRepository repo;
-            repo = new ItemRepository();
-            repo.SeedData();
+            ItemRepository itemRepo;
+            ReceiptRepository recieptRepo;
 
             Console.WriteLine("Welcome to cash register, type help for assistance.");
 
@@ -44,12 +43,13 @@ namespace CashRegister
                         }
                     case "HELP":
                         {
-                            Console.WriteLine("- enter EXIT to exit this application");
-                            Console.WriteLine("- enter CLS to clear the screen");
-                            Console.WriteLine("- enter BEGIN to begin a new transaction");
-                            Console.WriteLine("- enter COUPON to view the receipt");
-                            Console.WriteLine("- enter RECEIPT to view the receipt");
-                            Console.WriteLine("- enter END to finish the transaction");
+                            Console.WriteLine("- Enter EXIT to exit this application");
+                            Console.WriteLine("- Enter CLS to clear the screen");
+                            Console.WriteLine("- Enter BEGIN to begin a new transaction");
+                            Console.WriteLine("- Enter PURCHASE to buy an item");
+                            Console.WriteLine("- Enter COUPON to enter discount");
+                            Console.WriteLine("- Enter RECEIPT to view the receipt");
+                            Console.WriteLine("- Enter END to finish the transaction");
                             break;
                         }
                     case "CLS":
@@ -62,7 +62,27 @@ namespace CashRegister
                         {
                             try
                             {
-                                Console.WriteLine(input);
+                                recieptRepo = new ReceiptRepository();
+                                Console.WriteLine(input + recieptRepo._receipt.Id);
+                            }
+                            catch(Exception e)
+                            {
+                                Console.WriteLine(e.InnerException);
+                            }
+
+                            break;
+                        }
+
+                    case "PURCHASE":
+                        {
+                            try
+                            {
+                                Console.WriteLine("- Enter Product Name or SKU");
+                                string purchaseInput = Console.ReadLine();
+                                if (Guid.TryParse(purchaseInput, out Guid newOutGuid))
+                                    Console.WriteLine("- Entered {0}", newOutGuid);
+                                else
+                                    Console.WriteLine("- Entered {0}", purchaseInput);
                             }
                             catch
                             {

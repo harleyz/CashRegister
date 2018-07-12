@@ -19,6 +19,7 @@ namespace CashRegister.Models.Repositories
         public ItemRepository()
         {
             unitOfWork = new UnitOfWork();
+            SeedData();
         }
 
         public UnitOfWork UnitOfWork

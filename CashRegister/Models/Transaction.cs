@@ -19,7 +19,9 @@ namespace CashRegister.Models
         public decimal Quantity { get; set; }
         public System.DateTime Time { get; set; }
         public int ItemId { get; set; }
+        public int ReceiptId { get; set; }
     
         public virtual Item Item1 { get; set; }
+        public virtual Receipt Receipt { get; set; }
     }
 }

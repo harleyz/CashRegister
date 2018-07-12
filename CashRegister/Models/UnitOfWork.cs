@@ -8,6 +8,10 @@ namespace CashRegister.Models
     {
         private Entities context = new Entities();
         private EntityFrameworkRepository<Item> itemRepo;
+        private EntityFrameworkRepository<Register> registerRepo;
+        private EntityFrameworkRepository<Transaction> transactionRepo;
+        private EntityFrameworkRepository<Receipt> receiptRepo;
+        
 
         public Entities Context { get { return context; } }
 
@@ -20,6 +24,42 @@ namespace CashRegister.Models
                     itemRepo = new EntityFrameworkRepository<Item>(context);
                 }
                 return itemRepo;
+            }
+        }
+
+        public EntityFrameworkRepository<Register> Registers
+        {
+            get
+            {
+                if (registerRepo == null)
+                {
+                    registerRepo = new EntityFrameworkRepository<Register>(context);
+                }
+                return registerRepo;
+            }
+        }
+
+        public EntityFrameworkRepository<Transaction> Transactions
+        {
+            get
+            {
+                if (transactionRepo == null)
+                {
+                    transactionRepo = new EntityFrameworkRepository<Transaction>(context);
+                }
+                return transactionRepo;
+            }
+        }
+
+        public EntityFrameworkRepository<Receipt> Receipts
+        {
+            get
+            {
+                if (receiptRepo == null)
+                {
+                    receiptRepo = new EntityFrameworkRepository<Receipt>(context);
+                }
+                return receiptRepo;
             }
         }
 

@@ -9,7 +9,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
         <EntityType Name="Items">
           <Key>
@@ -22,25 +22,46 @@
           <Property Name="UnitOfMeasure" Type="int" Nullable="false" />
           <Property Name="QuanityOfMeasure" Type="decimal" Precision="18" Scale="0" Nullable="false" />
         </EntityType>
+        <EntityType Name="Receipts">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RegisterId" Type="int" Nullable="false" />
+          <Property Name="Time" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
         <EntityType Name="Registers">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nchar" MaxLength="10" Nullable="false" />
-          <Property Name="Location" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Location" Type="nvarchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="Transactions">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Item" Type="int" Nullable="false" />
           <Property Name="Quantity" Type="decimal" Precision="7" Scale="3" Nullable="false" />
           <Property Name="Time" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="ReceiptId" Type="int" Nullable="false" />
           <Property Name="ItemId" Type="int" Nullable="false" />
         </EntityType>
-        <Association Name="FK_Transactoins_Items">
+        <Association Name="FK_Receipts_Transactions">
+          <End Role="Registers" Type="Self.Registers" Multiplicity="1" />
+          <End Role="Receipts" Type="Self.Receipts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Registers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Receipts">
+              <PropertyRef Name="RegisterId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Items">
           <End Role="Items" Type="Self.Items" Multiplicity="1" />
           <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
           <ReferentialConstraint>
@@ -52,13 +73,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Transactions_Receipts">
+          <End Role="Receipts" Type="Self.Receipts" Multiplicity="1" />
+          <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Receipts">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="ReceiptId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="CashRegisterModelStoreContainer">
           <EntitySet Name="Discounts" EntityType="Self.Discounts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Items" EntityType="Self.Items" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Receipts" EntityType="Self.Receipts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Registers" EntityType="Self.Registers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Transactions" EntityType="Self.Transactions" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Transactoins_Items" Association="Self.FK_Transactoins_Items">
+          <AssociationSet Name="FK_Receipts_Transactions" Association="Self.FK_Receipts_Transactions">
+            <End Role="Registers" EntitySet="Registers" />
+            <End Role="Receipts" EntitySet="Receipts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Items" Association="Self.FK_Transactions_Items">
             <End Role="Items" EntitySet="Items" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Receipts" Association="Self.FK_Transactions_Receipts">
+            <End Role="Receipts" EntitySet="Receipts" />
             <End Role="Transactions" EntitySet="Transactions" />
           </AssociationSet>
         </EntityContainer>
@@ -89,8 +131,9 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
-          <Property Name="Location" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Location" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Receipts" Relationship="CashRegisterModel.FK_Receipts_Transactions" FromRole="Register" ToRole="Receipt" />
         </EntityType>
         <EntityType Name="Transaction">
           <Key>
@@ -102,6 +145,8 @@
           <Property Name="Time" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="ItemId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Item1" Relationship="Self.FK_Transactoins_Items" FromRole="Transactions" ToRole="Items" />
+          <Property Name="ReceiptId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Receipt" Relationship="CashRegisterModel.FK_Transactions_Receipts" FromRole="Transaction" ToRole="Receipt" />
         </EntityType>
         <Association Name="FK_Transactoins_Items">
           <End Role="Items" Type="Self.Item" Multiplicity="1" />
@@ -124,7 +169,50 @@
             <End Role="Items" EntitySet="Items" />
             <End Role="Transactions" EntitySet="Transactions" />
           </AssociationSet>
+          <EntitySet Name="Receipts" EntityType="CashRegisterModel.Receipt" />
+          <AssociationSet Name="FK_Receipts_Transactions" Association="CashRegisterModel.FK_Receipts_Transactions">
+            <End Role="Register" EntitySet="Registers" />
+            <End Role="Receipt" EntitySet="Receipts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Receipts" Association="CashRegisterModel.FK_Transactions_Receipts">
+            <End Role="Receipt" EntitySet="Receipts" />
+            <End Role="Transaction" EntitySet="Transactions" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Receipt">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="RegisterId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Register" Relationship="CashRegisterModel.FK_Receipts_Transactions" FromRole="Receipt" ToRole="Register" />
+          <NavigationProperty Name="Transactions" Relationship="CashRegisterModel.FK_Transactions_Receipts" FromRole="Receipt" ToRole="Transaction" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="7" />
+        </EntityType>
+        <Association Name="FK_Receipts_Transactions">
+          <End Type="CashRegisterModel.Register" Role="Register" Multiplicity="1" />
+          <End Type="CashRegisterModel.Receipt" Role="Receipt" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Register">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Receipt">
+              <PropertyRef Name="RegisterId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Receipts">
+          <End Type="CashRegisterModel.Receipt" Role="Receipt" Multiplicity="1" />
+          <End Type="CashRegisterModel.Transaction" Role="Transaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Receipt">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Transaction">
+              <PropertyRef Name="ReceiptId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -162,11 +250,21 @@
           <EntitySetMapping Name="Transactions">
             <EntityTypeMapping TypeName="CashRegisterModel.Transaction">
               <MappingFragment StoreEntitySet="Transactions">
+                <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Item" ColumnName="Item" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Receipts">
+            <EntityTypeMapping TypeName="CashRegisterModel.Receipt">
+              <MappingFragment StoreEntitySet="Receipts">
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="RegisterId" ColumnName="RegisterId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
