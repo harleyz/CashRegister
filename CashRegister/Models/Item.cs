@@ -23,9 +23,9 @@ namespace CashRegister.Models
         public int Id { get; set; }
         public System.Guid SKU { get; set; }
         public string ProductName { get; set; }
-        public Nullable<decimal> Cost { get; set; }
-        public Nullable<int> UnitOfMeasure { get; set; }
-        public Nullable<decimal> QuanityOfMeasure { get; set; }
+        public decimal Cost { get; set; }
+        public int UnitOfMeasure { get; set; }
+        public decimal QuanityOfMeasure { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Transaction> Transactions { get; set; }

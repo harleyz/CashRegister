@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CashRegister.Models.Repositories;
 
 /* 
     The 3 main requirements are:
@@ -23,6 +24,10 @@ namespace CashRegister
 
         static void Main(string[] args)
         {
+            ItemRepository repo;
+            repo = new ItemRepository();
+            repo.SeedData();
+
             Console.WriteLine("Welcome to cash register, type help for assistance.");
 
             while (true)
@@ -42,6 +47,7 @@ namespace CashRegister
                             Console.WriteLine("- enter EXIT to exit this application");
                             Console.WriteLine("- enter CLS to clear the screen");
                             Console.WriteLine("- enter BEGIN to begin a new transaction");
+                            Console.WriteLine("- enter COUPON to view the receipt");
                             Console.WriteLine("- enter RECEIPT to view the receipt");
                             Console.WriteLine("- enter END to finish the transaction");
                             break;
@@ -65,6 +71,21 @@ namespace CashRegister
 
                             break;
                         }
+
+                    case "COUPON":
+                        {
+                            try
+                            {
+                                Console.WriteLine(input);
+                            }
+                            catch
+                            {
+                                Console.WriteLine(errormsg);
+                            }
+
+                            break;
+                        }
+
                     case "RECEIPT":
                         {
                             try
