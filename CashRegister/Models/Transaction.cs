@@ -15,13 +15,12 @@ namespace CashRegister.Models
     public partial class Transaction
     {
         public int Id { get; set; }
-        public int Item { get; set; }
         public decimal Quantity { get; set; }
         public System.DateTime Time { get; set; }
-        public int ItemId { get; set; }
         public int ReceiptId { get; set; }
+        public int ItemId { get; set; }
     
-        public virtual Item Item1 { get; set; }
+        public virtual Item Item { get; set; }
         public virtual Receipt Receipt { get; set; }
     }
 }

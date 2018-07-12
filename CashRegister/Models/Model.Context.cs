@@ -28,7 +28,7 @@ namespace CashRegister.Models
         public virtual DbSet<Discount> Discounts { get; set; }
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<Register> Registers { get; set; }
-        public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<Receipt> Receipts { get; set; }
+        public virtual DbSet<Transaction> Transactions { get; set; }
     }
 }

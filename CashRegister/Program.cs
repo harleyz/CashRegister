@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CashRegister.Models;
 using CashRegister.Models.Repositories;
 
 /* 
@@ -24,8 +25,9 @@ namespace CashRegister
 
         static void Main(string[] args)
         {
-            ItemRepository itemRepo;
-            ReceiptRepository recieptRepo;
+            ItemRepository itemRepo = null;
+            ReceiptRepository recieptRepo = null;
+            TransactionRepository transactionRepo = null;
 
             Console.WriteLine("Welcome to cash register, type help for assistance.");
 
@@ -41,6 +43,7 @@ namespace CashRegister
                         {
                             return;
                         }
+
                     case "HELP":
                         {
                             Console.WriteLine("- Enter EXIT to exit this application");
@@ -48,10 +51,12 @@ namespace CashRegister
                             Console.WriteLine("- Enter BEGIN to begin a new transaction");
                             Console.WriteLine("- Enter PURCHASE to buy an item");
                             Console.WriteLine("- Enter COUPON to enter discount");
-                            Console.WriteLine("- Enter RECEIPT to view the receipt");
+                            Console.WriteLine("- Enter TOTAL to view the total");
+                            Console.WriteLine("- Enter LIST to view the receipt");
                             Console.WriteLine("- Enter END to finish the transaction");
                             break;
                         }
+
                     case "CLS":
                         {
                             Console.Clear();
@@ -62,8 +67,14 @@ namespace CashRegister
                         {
                             try
                             {
-                                recieptRepo = new ReceiptRepository();
-                                Console.WriteLine(input + recieptRepo._receipt.Id);
+                                if(recieptRepo == null)
+                                {
+                                    recieptRepo = new ReceiptRepository();
+                                    Console.WriteLine(input + " - reciept #" + recieptRepo._receipt.Id);
+                                } else
+                                {
+                                    Console.WriteLine("Please end current transaction using the END command");
+                                }
                             }
                             catch(Exception e)
                             {
@@ -77,16 +88,32 @@ namespace CashRegister
                         {
                             try
                             {
+                                itemRepo = new ItemRepository();                         
+
                                 Console.WriteLine("- Enter Product Name or SKU");
                                 string purchaseInput = Console.ReadLine();
-                                if (Guid.TryParse(purchaseInput, out Guid newOutGuid))
-                                    Console.WriteLine("- Entered {0}", newOutGuid);
-                                else
+                                decimal quantity;
+
+                                itemRepo.Find(purchaseInput);
+                                if (itemRepo._item != null)
+                                {
                                     Console.WriteLine("- Entered {0}", purchaseInput);
+                                    quantity = RequestDecimal("Please enter a quantity");
+                                    Console.WriteLine("- Entered {0}", quantity.ToString());
+
+
+                                    transactionRepo = new TransactionRepository();
+                                    transactionRepo.New(recieptRepo._receipt.Id, itemRepo._item.Id, quantity);
+                                }
+                                else
+                                {
+                                    //add suggestions (e.g. did you mean X?)
+                                    Console.WriteLine("- {0} was not found in the inventory", purchaseInput);
+                                }
                             }
-                            catch
+                            catch(Exception e)
                             {
-                                Console.WriteLine(errormsg);
+                                Console.WriteLine(e.InnerException);
                             }
 
                             break;
@@ -106,11 +133,19 @@ namespace CashRegister
                             break;
                         }
 
-                    case "RECEIPT":
+                    case "TOTAL":
                         {
                             try
                             {
                                 Console.WriteLine(input);
+                                if (recieptRepo == null)
+                                {
+                                    Console.WriteLine("Please begin a new transaction using the BEGIN command.");
+                                }
+                                else
+                                {
+                                    Console.WriteLine(recieptRepo.Total());
+                                }                                
                             }
                             catch
                             {
@@ -119,11 +154,36 @@ namespace CashRegister
 
                             break;
                         }
-                    case "END":
+
+                    case "LIST":
                         {
                             try
                             {
                                 Console.WriteLine(input);
+                                if (recieptRepo == null)
+                                {
+                                    Console.WriteLine("Please begin a new transaction using the BEGIN command.");
+                                }
+                                else
+                                {
+                                    Console.WriteLine(recieptRepo.WriteList());
+                                }
+                            }
+                            catch
+                            {
+                                Console.WriteLine(errormsg);
+                            }
+
+                            break;
+                        }
+
+                    case "END":
+                        {
+                            try
+                            {
+                                //print receipt here
+                                recieptRepo = null;
+                                Console.WriteLine("Transaction ended");
                             }
                             catch
                             {
@@ -139,6 +199,17 @@ namespace CashRegister
                         }
                 }
             }
+        }
+
+        static decimal RequestDecimal(string message)
+        {
+            decimal result;
+            do
+            {
+                Console.WriteLine(message);
+            }
+            while (!decimal.TryParse(Console.ReadLine(), out result));
+            return result;
         }
     }
 }

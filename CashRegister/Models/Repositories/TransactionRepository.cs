@@ -28,6 +28,15 @@ namespace CashRegister.Models.Repositories
             return unitOfWork.Transactions.Get(t => t.Id == Id, includeProperties: includeProperties, orderBy: o => o.OrderByDescending(order => order.Id)).FirstOrDefault();
         }
 
+        public Transaction New(int receiptId, int itemId, decimal quantity)
+        {
+            Transaction transaction = new Transaction() { ReceiptId = receiptId, ItemId = itemId, Quantity = quantity, Time = DateTime.Now };
+            unitOfWork.Transactions.Insert(transaction);
+            Save();
+
+            return transaction;
+        }
+
         public void Save()
         {
             unitOfWork.Context.SaveChanges();

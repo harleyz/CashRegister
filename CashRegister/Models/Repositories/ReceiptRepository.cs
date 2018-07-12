@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
+using static CashRegister.Models.Repositories.ItemRepository;
 
 namespace CashRegister.Models.Repositories
 {
@@ -40,6 +41,27 @@ namespace CashRegister.Models.Repositories
             unitOfWork.Receipts.Insert(receipt);
             Save();
             _receipt = receipt;
+        }
+
+        public string WriteList()
+        {
+            var transactions = unitOfWork.Transactions.Get(t => t.ReceiptId == _receipt.Id).ToList();
+
+            return string.Join("\r\n ", transactions.Select(t => t.Item.ProductName + " x " + t.Quantity + " " + Enum.GetName(typeof(UnitOfMeasure), t.Item.UnitOfMeasure)).ToList());
+        }
+
+        public string Total()
+        {
+            decimal total = 0.0m;
+
+            var transactions = unitOfWork.Transactions.Get(t => t.ReceiptId == _receipt.Id).ToList();
+
+            foreach(var transaction in transactions)
+            {
+                total = total + ((transaction.Quantity / transaction.Item.QuanityOfMeasure) * transaction.Item.Cost);
+            }
+
+            return total.ToString();
         }
 
         public void Save()

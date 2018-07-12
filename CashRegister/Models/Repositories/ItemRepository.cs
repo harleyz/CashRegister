@@ -15,6 +15,7 @@ namespace CashRegister.Models.Repositories
             OUNCES = 2,
             ITEM = 3
         }
+        public Item _item = null;
 
         public ItemRepository()
         {
@@ -30,9 +31,27 @@ namespace CashRegister.Models.Repositories
             }
         }
 
-        public Item GetItem(Guid SKU, string includeProperties = "")
+        public Item Get(Guid SKU, string includeProperties = "")
         {
             return unitOfWork.Items.Get(t => t.SKU == SKU, includeProperties: includeProperties, orderBy: o => o.OrderByDescending(order => order.Id)).FirstOrDefault();
+        }
+
+        public Item Get(string productName, string includeProperties = "")
+        {
+            return unitOfWork.Items.Get(t => t.ProductName == productName, includeProperties: includeProperties, orderBy: o => o.OrderByDescending(order => order.Id)).FirstOrDefault();
+        }
+
+
+        public void Find(string input)
+        {
+            if (Guid.TryParse(input, out Guid newOutGuid))
+            {
+                _item = Get(newOutGuid);
+            }
+            else
+            {
+                _item = Get(input);
+            }
         }
 
         public void SeedData()
