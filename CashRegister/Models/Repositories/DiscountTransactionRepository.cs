@@ -28,14 +28,37 @@ namespace CashRegister.Models.Repositories
             return unitOfWork.DiscountTransactions.Get(t => t.Id == Id, includeProperties: includeProperties, orderBy: o => o.OrderByDescending(order => order.Id)).FirstOrDefault();
         }
 
-        public DiscountTransaction New(int receiptId, int discountId, decimal quantity)
+        public DiscountTransaction New(int receiptId, int discountId, int? itemId = null)
         {
-            DiscountTransaction discountTransaction = new DiscountTransaction() { ReceiptId = receiptId, DiscountId = discountId, Time = DateTime.Now };
+            DiscountTransaction discountTransaction = new DiscountTransaction() { ReceiptId = receiptId, DiscountId = discountId, ItemId = itemId, Time = DateTime.Now };
             unitOfWork.DiscountTransactions.Insert(discountTransaction);
             Save();
 
             return discountTransaction;
         }
+
+        public string WriteTotal(int receiptId)
+        {
+            decimal total = 0.0m;
+            var discountTransactions = unitOfWork.DiscountTransactions.Get(t => t.ReceiptId == receiptId).ToList();
+
+            foreach (var discountTransaction in discountTransactions)
+            {
+                if(discountTransaction.Discount.Percent != null)
+                {
+                    //get receipt total minus percent
+                }
+                else
+                {
+                    //calc the amount off for items
+                    //total = total + ((transaction.Quantity / transaction.Item.QuanityOfMeasure) * transaction.Item.Cost);
+                }
+
+            }
+
+            return total.ToString();
+        }
+        
 
         public void Save()
         {

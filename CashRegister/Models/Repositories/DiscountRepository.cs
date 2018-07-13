@@ -35,7 +35,6 @@ namespace CashRegister.Models.Repositories
             return unitOfWork.Discounts.Get(t => t.Code == code, includeProperties: includeProperties, orderBy: o => o.OrderByDescending(order => order.Id)).FirstOrDefault();
         }
 
-
         public void Find(string input)
         {
             if (Guid.TryParse(input, out Guid newOutGuid))
@@ -45,6 +44,19 @@ namespace CashRegister.Models.Repositories
             else
             {
                 _discount = Get(input);
+            }
+        }
+        
+        public bool IsValid(int recieptId)
+        {
+            //search list of items for match
+            if(_discount.ItemId == recieptId)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

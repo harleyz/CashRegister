@@ -6,7 +6,32 @@ using System.Threading.Tasks;
 using CashRegister.Models;
 using CashRegister.Models.Repositories;
 
+
 /* 
+    I went with a repository approach - it was not necessary at all for this project however it is scalable and reusable 
+    and hopefully a different approach than you usually recieve.  The DB is live on azure, and the firewall is removed, if you want to use it (I included the pass in source control).
+    If not please publish the DB to a local DB using the SQL project, the data will seed itself during execution.  The Cheers!
+
+    Sample input:
+        help
+        begin
+        purchase
+        apples
+        2.5
+        oranges
+        2
+        pinapple pizza
+        1
+        list
+        total
+        coupon
+        3APPLES1FREE
+        coupon
+        20PERCENT
+        end
+        exit
+
+
     The 3 main requirements are:
 
     It needs to be able to scan items in by quantity and weight
@@ -29,13 +54,13 @@ namespace CashRegister
             ReceiptRepository recieptRepo = null;
             TransactionRepository transactionRepo = null;
             DiscountRepository discountRepo = null;
+            DiscountTransactionRepository discountTransactionRepo = null;
 
             Console.WriteLine("Welcome to cash register, type help for assistance.");
 
             while (true)
             {
                 string input = Console.ReadLine();
-
                 input = input.ToUpper();
 
                 switch (input)
@@ -99,9 +124,9 @@ namespace CashRegister
                                 if (itemRepo._item != null)
                                 {
                                     Console.WriteLine("- Entered {0}", purchaseInput);
+                                    //ask for weight or quantity here?
                                     quantity = RequestDecimal("Please enter a quantity");
                                     Console.WriteLine("- Entered {0}", quantity.ToString());
-
 
                                     transactionRepo = new TransactionRepository();
                                     transactionRepo.New(recieptRepo._receipt.Id, itemRepo._item.Id, quantity);
@@ -134,10 +159,14 @@ namespace CashRegister
                                 {
                                     Console.WriteLine("- Entered {0}", discountRepo._discount.Code);
 
-                                    //check if valid
+                                    //check if valid then apply
+                                    if (discountRepo.IsValid(recieptRepo._receipt.Id))
+                                    {
+                                        discountTransactionRepo = new DiscountTransactionRepository();
+                                        discountTransactionRepo.New(recieptRepo._receipt.Id, discountRepo._discount.Id, discountRepo._discount.ItemId);
 
-                                    //transactionRepo = new TransactionRepository();
-                                    //transactionRepo.New(recieptRepo._receipt.Id, itemRepo._item.Id, quantity);
+                                        Console.WriteLine(discountTransactionRepo.WriteTotal(recieptRepo._receipt.Id));
+                                    }
                                 }
                                 else
                                 {
@@ -157,13 +186,14 @@ namespace CashRegister
                         {
                             try
                             {
-                                Console.WriteLine(input);
+                                Console.WriteLine(input); 
                                 if (recieptRepo == null)
                                 {
                                     Console.WriteLine("Please begin a new transaction using the BEGIN command.");
                                 }
                                 else
                                 {
+                                    //print discount too
                                     Console.WriteLine(recieptRepo.Total());
                                 }                                
                             }
