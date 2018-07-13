@@ -49,15 +49,31 @@ namespace CashRegister.Models.Repositories
         
         public bool IsValid(int recieptId)
         {
-            //search list of items for match
-            if(_discount.ItemId == recieptId)
+            if(_discount.Percent != null)
             {
+                //maybe check if a percent against the whole receipt has been applied already and invalidate a second?
                 return true;
             }
-            else
+            else if(_discount.BuyX != null && _discount.FreeY != null && _discount.ItemId != null)
             {
-                return false;
+                var listOfTransactions = unitOfWork.Transactions.Get(t => t.ReceiptId == recieptId).ToList();
+
+                //check the coupon against the purchased items for validity
+                foreach(var transaction in listOfTransactions)
+                {
+                    if (_discount.ItemId == transaction.ItemId)
+                    {
+                        if (transaction.Quantity > _discount.BuyX)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                
             }
+
+            return false;
+            
         }
 
         public void SeedData()

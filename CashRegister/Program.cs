@@ -159,18 +159,20 @@ namespace CashRegister
                                 {
                                     Console.WriteLine("- Entered {0}", discountRepo._discount.Code);
 
-                                    //check if valid then apply
+                                    //check validity then apply
                                     if (discountRepo.IsValid(recieptRepo._receipt.Id))
                                     {
                                         discountTransactionRepo = new DiscountTransactionRepository();
                                         discountTransactionRepo.New(recieptRepo._receipt.Id, discountRepo._discount.Id, discountRepo._discount.ItemId);
 
                                         Console.WriteLine(discountTransactionRepo.WriteTotal(recieptRepo._receipt.Id));
+                                    } else
+                                    {
+                                        Console.WriteLine("- {0} was not a valid coupon", discountInput);
                                     }
                                 }
                                 else
                                 {
-                                    //add suggestions (e.g. did you mean X?)
                                     Console.WriteLine("- {0} was not a valid coupon", discountInput);
                                 }
                             }

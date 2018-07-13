@@ -9,6 +9,7 @@ namespace CashRegister.Models.Repositories
     public class DiscountTransactionRepository
     {
         private UnitOfWork unitOfWork;
+        ReceiptRepository recieptRepo = null;
 
         public DiscountTransactionRepository()
         {
@@ -39,26 +40,30 @@ namespace CashRegister.Models.Repositories
 
         public string WriteTotal(int receiptId)
         {
-            decimal total = 0.0m;
-            var discountTransactions = unitOfWork.DiscountTransactions.Get(t => t.ReceiptId == receiptId).ToList();
+            recieptRepo = new ReceiptRepository(receiptId);
+            decimal total = recieptRepo.DecimalTotal();
+            decimal discountTotal = 0.0m;
+            decimal newTotal = 0.0m;
+            var discountTransactions = unitOfWork.DiscountTransactions.Get(t => t.ReceiptId == receiptId, null, "Discount").ToList();
 
             foreach (var discountTransaction in discountTransactions)
             {
                 if(discountTransaction.Discount.Percent != null)
                 {
-                    //get receipt total minus percent
+                    //calc the amount off for percent
+                    discountTotal += total * (discountTransaction.Discount.Percent.Value * 0.01m);
                 }
-                else
+                else if (discountTransaction.Discount.BuyX != null && discountTransaction.Discount.FreeY != null && discountTransaction.Discount.ItemId != null)
                 {
                     //calc the amount off for items
-                    //total = total + ((transaction.Quantity / transaction.Item.QuanityOfMeasure) * transaction.Item.Cost);
+                    discountTotal += (discountTransaction.Discount.FreeY.Value / discountTransaction.Discount.Item.QuanityOfMeasure) * discountTransaction.Discount.Item.Cost;
                 }
-
             }
 
-            return total.ToString();
-        }
-        
+            newTotal = total - discountTotal;
+
+            return "Previous Total = " + total + " New Total = " + newTotal + " Discount Total = " + discountTotal.ToString();
+        }        
 
         public void Save()
         {

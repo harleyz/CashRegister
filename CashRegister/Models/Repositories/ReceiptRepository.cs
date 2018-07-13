@@ -20,6 +20,12 @@ namespace CashRegister.Models.Repositories
             New();
         }
 
+        public ReceiptRepository(int receiptId)
+        {
+            unitOfWork = new UnitOfWork();
+            Old(receiptId);
+        }
+
         public UnitOfWork UnitOfWork
         {
             get
@@ -43,6 +49,11 @@ namespace CashRegister.Models.Repositories
             _receipt = receipt;
         }
 
+        public void Old(int receiptId)
+        {
+            _receipt = Get(receiptId);
+        }
+
         public string WriteList()
         {
             var transactions = unitOfWork.Transactions.Get(t => t.ReceiptId == _receipt.Id).ToList();
@@ -62,6 +73,20 @@ namespace CashRegister.Models.Repositories
             }
 
             return total.ToString();
+        }
+
+        public decimal DecimalTotal()
+        {
+            decimal total = 0.0m;
+
+            var transactions = unitOfWork.Transactions.Get(t => t.ReceiptId == _receipt.Id).ToList();
+
+            foreach (var transaction in transactions)
+            {
+                total = total + ((transaction.Quantity / transaction.Item.QuanityOfMeasure) * transaction.Item.Cost);
+            }
+
+            return total;
         }
 
         public void Save()
