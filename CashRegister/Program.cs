@@ -17,10 +17,12 @@ using CashRegister.Models.Repositories;
         begin
         purchase
         apples
-        2.5
+        4
+        purchase
         oranges
-        2
-        pinapple pizza
+        4
+        purchase
+        pineapple pizza
         1
         list
         total
@@ -79,7 +81,7 @@ namespace CashRegister
                             Console.WriteLine("- Enter COUPON to enter discount");
                             Console.WriteLine("- Enter TOTAL to view the total");
                             Console.WriteLine("- Enter LIST to view the receipt");
-                            Console.WriteLine("- Enter END to finish the transaction");
+                            Console.WriteLine("- Enter END to finish the transaction\r\n");
                             break;
                         }
 
@@ -96,15 +98,15 @@ namespace CashRegister
                                 if(recieptRepo == null)
                                 {
                                     recieptRepo = new ReceiptRepository();
-                                    Console.WriteLine(input + " - reciept #" + recieptRepo._receipt.Id);
+                                    Console.WriteLine("\r\n" + input + " - reciept #" + recieptRepo._receipt.Id + "\r\n");
                                 } else
                                 {
-                                    Console.WriteLine("Please end current transaction using the END command");
+                                    Console.WriteLine("\r\n" + "Please end current transaction using the END command");
                                 }
                             }
                             catch(Exception e)
                             {
-                                Console.WriteLine(e.InnerException);
+                                Console.WriteLine("\r\n" + e.InnerException);
                             }
 
                             break;
@@ -114,34 +116,39 @@ namespace CashRegister
                         {
                             try
                             {
-                                itemRepo = new ItemRepository();                         
-
-                                Console.WriteLine("- Enter Product Name or SKU");
-                                string purchaseInput = Console.ReadLine();
-                                decimal quantity;
-
-                                itemRepo.Find(purchaseInput);
-                                if (itemRepo._item != null)
+                                if (recieptRepo == null)
                                 {
-                                    Console.WriteLine("- Entered {0}", purchaseInput);
-                                    //ask for weight or quantity here?
-                                    quantity = RequestDecimal("Please enter a quantity");
-                                    Console.WriteLine("- Entered {0}", quantity.ToString());
-
-                                    transactionRepo = new TransactionRepository();
-                                    transactionRepo.New(recieptRepo._receipt.Id, itemRepo._item.Id, quantity);
+                                    Console.WriteLine("\r\n" + "Please begin a new transaction using the BEGIN command.");
                                 }
                                 else
                                 {
-                                    //add suggestions (e.g. did you mean X?)
-                                    Console.WriteLine("- {0} was not found in the inventory", purchaseInput);
-                                }
+                                    itemRepo = new ItemRepository();
+
+                                    Console.WriteLine("\r\n" + "- Enter Product Name or SKU");
+                                    string purchaseInput = Console.ReadLine();
+                                    decimal quantity;
+
+                                    itemRepo.Find(purchaseInput);
+                                    if (itemRepo._item != null)
+                                    {
+                                        //ask for weight or quantity here?
+                                        quantity = RequestDecimal(String.Format("\r\n" + "Please enter a quantity of {0}", purchaseInput));
+                                        Console.WriteLine("\r\n" + "- Entered {0} of {1}", quantity.ToString(), purchaseInput);
+
+                                        transactionRepo = new TransactionRepository();
+                                        transactionRepo.New(recieptRepo._receipt.Id, itemRepo._item.Id, quantity);
+                                    }
+                                    else
+                                    {
+                                        //add suggestions (e.g. did you mean X?)
+                                        Console.WriteLine("\r\n" + "- {0} was not found in the inventory", purchaseInput);
+                                    }
+                                }                                
                             }
                             catch(Exception e)
                             {
                                 Console.WriteLine(e.InnerException);
                             }
-
                             break;
                         }
 
@@ -149,36 +156,44 @@ namespace CashRegister
                         {
                             try
                             {
-                                discountRepo = new DiscountRepository();
-
-                                Console.WriteLine("- Enter Code or SKU");
-                                string discountInput = Console.ReadLine();
-
-                                discountRepo.Find(discountInput);
-                                if (discountRepo._discount != null)
+                                if (recieptRepo == null)
                                 {
-                                    Console.WriteLine("- Entered {0}", discountRepo._discount.Code);
-
-                                    //check validity then apply
-                                    if (discountRepo.IsValid(recieptRepo._receipt.Id))
-                                    {
-                                        discountTransactionRepo = new DiscountTransactionRepository();
-                                        discountTransactionRepo.New(recieptRepo._receipt.Id, discountRepo._discount.Id, discountRepo._discount.ItemId);
-
-                                        Console.WriteLine(discountTransactionRepo.WriteTotal(recieptRepo._receipt.Id));
-                                    } else
-                                    {
-                                        Console.WriteLine("- {0} was not a valid coupon", discountInput);
-                                    }
+                                    Console.WriteLine("\r\n" + "Please begin a new transaction using the BEGIN command.");
                                 }
                                 else
                                 {
-                                    Console.WriteLine("- {0} was not a valid coupon", discountInput);
+                                    discountRepo = new DiscountRepository();
+
+                                    Console.WriteLine("\r\n" + "- Enter Code or SKU");
+                                    string discountInput = Console.ReadLine();
+
+                                    discountRepo.Find(discountInput);
+                                    if (discountRepo._discount != null)
+                                    {
+                                        Console.WriteLine("\r\n" + "- Entered {0}", discountRepo._discount.Code);
+
+                                        //check validity then apply
+                                        if (discountRepo.IsValid(recieptRepo._receipt.Id))
+                                        {
+                                            discountTransactionRepo = new DiscountTransactionRepository();
+                                            discountTransactionRepo.New(recieptRepo._receipt.Id, discountRepo._discount.Id, discountRepo._discount.ItemId);
+
+                                            Console.WriteLine(discountTransactionRepo.WriteTotal(recieptRepo._receipt.Id));
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("\r\n" + "- {0} was not a valid coupon", discountInput);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("\r\n" + "- {0} was not a valid coupon", discountInput);
+                                    }
                                 }
                             }
                             catch (Exception e)
                             {
-                                Console.WriteLine(e.InnerException);
+                                Console.WriteLine("\r\n" + e.InnerException);
                             }
 
                             break;
@@ -188,20 +203,21 @@ namespace CashRegister
                         {
                             try
                             {
-                                Console.WriteLine(input); 
+                                discountTransactionRepo = new DiscountTransactionRepository();
+                                Console.WriteLine("\r\n" + input); 
                                 if (recieptRepo == null)
                                 {
-                                    Console.WriteLine("Please begin a new transaction using the BEGIN command.");
+                                    Console.WriteLine("\r\n" + "Please begin a new transaction using the BEGIN command.");
                                 }
                                 else
                                 {
-                                    //print discount too
-                                    Console.WriteLine(recieptRepo.Total());
+                                    //total and discounts
+                                    Console.WriteLine("\r\n" + discountTransactionRepo.WriteTotal(recieptRepo._receipt.Id));
                                 }                                
                             }
-                            catch
+                            catch(Exception e)
                             {
-                                Console.WriteLine(errormsg);
+                                Console.WriteLine("\r\n" + e.InnerException);
                             }
 
                             break;
@@ -214,16 +230,16 @@ namespace CashRegister
                                 Console.WriteLine(input);
                                 if (recieptRepo == null)
                                 {
-                                    Console.WriteLine("Please begin a new transaction using the BEGIN command.");
+                                    Console.WriteLine("\r\n" + "Please begin a new transaction using the BEGIN command.");
                                 }
                                 else
                                 {
-                                    Console.WriteLine(recieptRepo.WriteList());
+                                    Console.WriteLine("\r\n" + recieptRepo.WriteList());
                                 }
                             }
                             catch
                             {
-                                Console.WriteLine(errormsg);
+                                Console.WriteLine("\r\n" + errormsg);
                             }
 
                             break;
@@ -235,18 +251,18 @@ namespace CashRegister
                             {
                                 //print receipt here
                                 recieptRepo = null;
-                                Console.WriteLine("Transaction ended");
+                                Console.WriteLine("\r\n" + "Transaction ended");
                             }
                             catch
                             {
-                                Console.WriteLine(errormsg);
+                                Console.WriteLine("\r\n" + errormsg);
                             }
 
                             break;
                         }
                     default:
                         {
-                            Console.WriteLine(errormsg);
+                            Console.WriteLine("\r\n" + errormsg);
                             break;
                         }
                 }
@@ -258,7 +274,7 @@ namespace CashRegister
             decimal result;
             do
             {
-                Console.WriteLine(message);
+                Console.WriteLine("\r\n" + message);
             }
             while (!decimal.TryParse(Console.ReadLine(), out result));
             return result;

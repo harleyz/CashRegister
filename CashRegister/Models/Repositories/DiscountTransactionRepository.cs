@@ -61,8 +61,8 @@ namespace CashRegister.Models.Repositories
             }
 
             newTotal = total - discountTotal;
-
-            return "Previous Total = " + total + " New Total = " + newTotal + " Discount Total = " + discountTotal.ToString();
+            
+            return "Previous Total = " + String.Format("{0:C2}", total) + " New Total = " + String.Format("{0:C2}", newTotal) + " Discount Total = " + String.Format("{0:C2}", discountTotal);
         }        
 
         public void Save()
