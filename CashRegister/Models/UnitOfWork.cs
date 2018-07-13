@@ -11,7 +11,9 @@ namespace CashRegister.Models
         private EntityFrameworkRepository<Register> registerRepo;
         private EntityFrameworkRepository<Transaction> transactionRepo;
         private EntityFrameworkRepository<Receipt> receiptRepo;
-        
+        private EntityFrameworkRepository<Discount> discountRepo;
+        private EntityFrameworkRepository<DiscountTransaction> discountTransactionRepo;
+
 
         public Entities Context { get { return context; } }
 
@@ -50,6 +52,31 @@ namespace CashRegister.Models
                 return transactionRepo;
             }
         }
+
+        public EntityFrameworkRepository<Discount> Discounts
+        {
+            get
+            {
+                if (discountRepo == null)
+                {
+                    discountRepo = new EntityFrameworkRepository<Discount>(context);
+                }
+                return discountRepo;
+            }
+        }
+
+        public EntityFrameworkRepository<DiscountTransaction> DiscountTransactions
+        {
+            get
+            {
+                if (discountTransactionRepo == null)
+                {
+                    discountTransactionRepo = new EntityFrameworkRepository<DiscountTransaction>(context);
+                }
+                return discountTransactionRepo;
+            }
+        }
+
 
         public EntityFrameworkRepository<Receipt> Receipts
         {

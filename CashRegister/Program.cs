@@ -28,6 +28,7 @@ namespace CashRegister
             ItemRepository itemRepo = null;
             ReceiptRepository recieptRepo = null;
             TransactionRepository transactionRepo = null;
+            DiscountRepository discountRepo = null;
 
             Console.WriteLine("Welcome to cash register, type help for assistance.");
 
@@ -123,11 +124,30 @@ namespace CashRegister
                         {
                             try
                             {
-                                Console.WriteLine(input);
+                                discountRepo = new DiscountRepository();
+
+                                Console.WriteLine("- Enter Code or SKU");
+                                string discountInput = Console.ReadLine();
+
+                                discountRepo.Find(discountInput);
+                                if (discountRepo._discount != null)
+                                {
+                                    Console.WriteLine("- Entered {0}", discountRepo._discount.Code);
+
+                                    //check if valid
+
+                                    //transactionRepo = new TransactionRepository();
+                                    //transactionRepo.New(recieptRepo._receipt.Id, itemRepo._item.Id, quantity);
+                                }
+                                else
+                                {
+                                    //add suggestions (e.g. did you mean X?)
+                                    Console.WriteLine("- {0} was not a valid coupon", discountInput);
+                                }
                             }
-                            catch
+                            catch (Exception e)
                             {
-                                Console.WriteLine(errormsg);
+                                Console.WriteLine(e.InnerException);
                             }
 
                             break;

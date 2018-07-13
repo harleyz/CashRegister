@@ -10,6 +10,22 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="SKU" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Percent" Type="int" />
+          <Property Name="BuyX" Type="int" />
+          <Property Name="FreeY" Type="int" />
+          <Property Name="ItemId" Type="int" />
+        </EntityType>
+        <EntityType Name="DiscountTransactions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Time" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="ReceiptId" Type="int" Nullable="false" />
+          <Property Name="DiscountId" Type="int" Nullable="false" />
+          <Property Name="ItemId" Type="int" />
         </EntityType>
         <EntityType Name="Items">
           <Key>
@@ -48,6 +64,54 @@
           <Property Name="ReceiptId" Type="int" Nullable="false" />
           <Property Name="ItemId" Type="int" Nullable="false" />
         </EntityType>
+        <Association Name="FK_Discounts_Items">
+          <End Role="Items" Type="Self.Items" Multiplicity="0..1" />
+          <End Role="Discounts" Type="Self.Discounts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Items">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Discounts">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DiscountTransactions_Discount">
+          <End Role="Discounts" Type="Self.Discounts" Multiplicity="1" />
+          <End Role="DiscountTransactions" Type="Self.DiscountTransactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Discounts">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DiscountTransactions">
+              <PropertyRef Name="DiscountId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DiscountTransactions_Items">
+          <End Role="Items" Type="Self.Items" Multiplicity="0..1" />
+          <End Role="DiscountTransactions" Type="Self.DiscountTransactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Items">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DiscountTransactions">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DiscountTransactions_Receipts">
+          <End Role="Receipts" Type="Self.Receipts" Multiplicity="1" />
+          <End Role="DiscountTransactions" Type="Self.DiscountTransactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Receipts">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DiscountTransactions">
+              <PropertyRef Name="ReceiptId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Receipts_Transactions">
           <End Role="Registers" Type="Self.Registers" Multiplicity="1" />
           <End Role="Receipts" Type="Self.Receipts" Multiplicity="*" />
@@ -86,10 +150,27 @@
         </Association>
         <EntityContainer Name="CashRegisterModelStoreContainer">
           <EntitySet Name="Discounts" EntityType="Self.Discounts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DiscountTransactions" EntityType="Self.DiscountTransactions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Items" EntityType="Self.Items" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Receipts" EntityType="Self.Receipts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Registers" EntityType="Self.Registers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Transactions" EntityType="Self.Transactions" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Discounts_Items" Association="Self.FK_Discounts_Items">
+            <End Role="Items" EntitySet="Items" />
+            <End Role="Discounts" EntitySet="Discounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DiscountTransactions_Discount" Association="Self.FK_DiscountTransactions_Discount">
+            <End Role="Discounts" EntitySet="Discounts" />
+            <End Role="DiscountTransactions" EntitySet="DiscountTransactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DiscountTransactions_Items" Association="Self.FK_DiscountTransactions_Items">
+            <End Role="Items" EntitySet="Items" />
+            <End Role="DiscountTransactions" EntitySet="DiscountTransactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DiscountTransactions_Receipts" Association="Self.FK_DiscountTransactions_Receipts">
+            <End Role="Receipts" EntitySet="Receipts" />
+            <End Role="DiscountTransactions" EntitySet="DiscountTransactions" />
+          </AssociationSet>
           <AssociationSet Name="FK_Receipts_Transactions" Association="Self.FK_Receipts_Transactions">
             <End Role="Registers" EntitySet="Registers" />
             <End Role="Receipts" EntitySet="Receipts" />
@@ -107,12 +188,6 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="CashRegisterModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Discount">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-        </EntityType>
         <EntityType Name="Item">
           <Key>
             <PropertyRef Name="Id" />
@@ -124,6 +199,8 @@
           <Property Name="UnitOfMeasure" Type="Int32" Nullable="false" />
           <Property Name="QuanityOfMeasure" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
           <NavigationProperty Name="Transactions" Relationship="CashRegisterModel.FK_Transactions_Items" FromRole="Item" ToRole="Transaction" />
+          <NavigationProperty Name="Discounts" Relationship="CashRegisterModel.FK_Discounts_Items" FromRole="Item" ToRole="Discount" />
+          <NavigationProperty Name="DiscountTransactions" Relationship="CashRegisterModel.FK_DiscountTransactions_Items" FromRole="Item" ToRole="DiscountTransaction" />
         </EntityType>
         <EntityType Name="Register">
           <Key>
@@ -135,7 +212,6 @@
           <NavigationProperty Name="Receipts" Relationship="CashRegisterModel.FK_Receipts_Transactions" FromRole="Register" ToRole="Receipt" />
         </EntityType>
         <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Discounts" EntityType="Self.Discount" />
           <EntitySet Name="Items" EntityType="Self.Item" />
           <EntitySet Name="Registers" EntityType="Self.Register" />
           <EntitySet Name="Receipts" EntityType="CashRegisterModel.Receipt" />
@@ -152,7 +228,25 @@
             <End Role="Receipt" EntitySet="Receipts" />
             <End Role="Transaction" EntitySet="Transactions" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="Discounts" EntityType="CashRegisterModel.Discount" />
+          <EntitySet Name="DiscountTransactions" EntityType="CashRegisterModel.DiscountTransaction" />
+          <AssociationSet Name="FK_Discounts_Items" Association="CashRegisterModel.FK_Discounts_Items">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="Discount" EntitySet="Discounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DiscountTransactions_Discount" Association="CashRegisterModel.FK_DiscountTransactions_Discount">
+            <End Role="Discount" EntitySet="Discounts" />
+            <End Role="DiscountTransaction" EntitySet="DiscountTransactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DiscountTransactions_Items" Association="CashRegisterModel.FK_DiscountTransactions_Items">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="DiscountTransaction" EntitySet="DiscountTransactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DiscountTransactions_Receipts" Association="CashRegisterModel.FK_DiscountTransactions_Receipts">
+            <End Role="Receipt" EntitySet="Receipts" />
+            <End Role="DiscountTransaction" EntitySet="DiscountTransactions" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="Receipt">
           <Key>
             <PropertyRef Name="Id" />
@@ -162,6 +256,7 @@
           <NavigationProperty Name="Register" Relationship="CashRegisterModel.FK_Receipts_Transactions" FromRole="Receipt" ToRole="Register" />
           <Property Name="Time" Type="DateTime" Nullable="false" Precision="7" />
           <NavigationProperty Name="Transactions" Relationship="CashRegisterModel.FK_Transactions_Receipts" FromRole="Receipt" ToRole="Transaction" />
+          <NavigationProperty Name="DiscountTransactions" Relationship="CashRegisterModel.FK_DiscountTransactions_Receipts" FromRole="Receipt" ToRole="DiscountTransaction" />
         </EntityType>
         <Association Name="FK_Receipts_Transactions">
           <End Type="CashRegisterModel.Register" Role="Register" Multiplicity="1" />
@@ -211,19 +306,87 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        <EntityType Name="Discount">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="SKU" Type="Guid" Nullable="false" />
+          <Property Name="Percent" Type="Int32" />
+          <Property Name="BuyX" Type="Int32" />
+          <Property Name="FreeY" Type="Int32" />
+          <Property Name="ItemId" Type="Int32" />
+          <NavigationProperty Name="Item" Relationship="CashRegisterModel.FK_Discounts_Items" FromRole="Discount" ToRole="Item" />
+          <NavigationProperty Name="DiscountTransactions" Relationship="CashRegisterModel.FK_DiscountTransactions_Discount" FromRole="Discount" ToRole="DiscountTransaction" />
+        </EntityType>
+        <EntityType Name="DiscountTransaction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ReceiptId" Type="Int32" Nullable="false" />
+          <Property Name="DiscountId" Type="Int32" Nullable="false" />
+          <Property Name="ItemId" Type="Int32" />
+          <NavigationProperty Name="Discount" Relationship="CashRegisterModel.FK_DiscountTransactions_Discount" FromRole="DiscountTransaction" ToRole="Discount" />
+          <NavigationProperty Name="Item" Relationship="CashRegisterModel.FK_DiscountTransactions_Items" FromRole="DiscountTransaction" ToRole="Item" />
+          <NavigationProperty Name="Receipt" Relationship="CashRegisterModel.FK_DiscountTransactions_Receipts" FromRole="DiscountTransaction" ToRole="Receipt" />
+        </EntityType>
+        <Association Name="FK_Discounts_Items">
+          <End Type="CashRegisterModel.Item" Role="Item" Multiplicity="0..1" />
+          <End Type="CashRegisterModel.Discount" Role="Discount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Discount">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DiscountTransactions_Discount">
+          <End Type="CashRegisterModel.Discount" Role="Discount" Multiplicity="1" />
+          <End Type="CashRegisterModel.DiscountTransaction" Role="DiscountTransaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Discount">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DiscountTransaction">
+              <PropertyRef Name="DiscountId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DiscountTransactions_Items">
+          <End Type="CashRegisterModel.Item" Role="Item" Multiplicity="0..1" />
+          <End Type="CashRegisterModel.DiscountTransaction" Role="DiscountTransaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DiscountTransaction">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DiscountTransactions_Receipts">
+          <End Type="CashRegisterModel.Receipt" Role="Receipt" Multiplicity="1" />
+          <End Type="CashRegisterModel.DiscountTransaction" Role="DiscountTransaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Receipt">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DiscountTransaction">
+              <PropertyRef Name="ReceiptId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="CashRegisterModelStoreContainer" CdmEntityContainer="Entities">
-          <EntitySetMapping Name="Discounts">
-            <EntityTypeMapping TypeName="CashRegisterModel.Discount">
-              <MappingFragment StoreEntitySet="Discounts">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Items">
             <EntityTypeMapping TypeName="CashRegisterModel.Item">
               <MappingFragment StoreEntitySet="Items">
@@ -261,6 +424,30 @@
                 <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Discounts">
+            <EntityTypeMapping TypeName="CashRegisterModel.Discount">
+              <MappingFragment StoreEntitySet="Discounts">
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="FreeY" ColumnName="FreeY" />
+                <ScalarProperty Name="BuyX" ColumnName="BuyX" />
+                <ScalarProperty Name="Percent" ColumnName="Percent" />
+                <ScalarProperty Name="SKU" ColumnName="SKU" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DiscountTransactions">
+            <EntityTypeMapping TypeName="CashRegisterModel.DiscountTransaction">
+              <MappingFragment StoreEntitySet="DiscountTransactions">
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="DiscountId" ColumnName="DiscountId" />
+                <ScalarProperty Name="ReceiptId" ColumnName="ReceiptId" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

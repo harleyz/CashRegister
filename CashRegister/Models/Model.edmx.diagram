@@ -4,16 +4,21 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="68d1a14271824969ad7335b2397fcd47" Name="Diagram1">
-        <EntityTypeShape EntityType="CashRegisterModel.Discount" Width="1.5" PointX="2.25" PointY="4.375" IsExpanded="true" />
+      <Diagram DiagramId="68d1a14271824969ad7335b2397fcd47" Name="Diagram1" ZoomLevel="113">
         <EntityTypeShape EntityType="CashRegisterModel.Item" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="CashRegisterModel.Register" Width="1.5" PointX="5.625" PointY="4.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="CashRegisterModel.Receipt" Width="1.5" PointX="7.375" PointY="1.375" />
+        <EntityTypeShape EntityType="CashRegisterModel.Register" Width="1.5" PointX="8.25" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="CashRegisterModel.Receipt" Width="1.5" PointX="5.75" PointY="2.875" />
         <AssociationConnector Association="CashRegisterModel.FK_Receipts_Transactions" />
-        <EntityTypeShape EntityType="CashRegisterModel.Transaction" Width="1.5" PointX="3.75" PointY="1" />
+        <EntityTypeShape EntityType="CashRegisterModel.Transaction" Width="1.5" PointX="2.875" PointY="1.125" />
         <AssociationConnector Association="CashRegisterModel.FK_Transactions_Items" />
         <AssociationConnector Association="CashRegisterModel.FK_Transactions_Receipts" />
-      </Diagram>
+        <EntityTypeShape EntityType="CashRegisterModel.Discount" Width="1.5" PointX="0.75" PointY="4.5" />
+        <EntityTypeShape EntityType="CashRegisterModel.DiscountTransaction" Width="1.5" PointX="2.875" PointY="4.5" />
+        <AssociationConnector Association="CashRegisterModel.FK_Discounts_Items" />
+        <AssociationConnector Association="CashRegisterModel.FK_DiscountTransactions_Discount" />
+        <AssociationConnector Association="CashRegisterModel.FK_DiscountTransactions_Items" />
+        <AssociationConnector Association="CashRegisterModel.FK_DiscountTransactions_Receipts" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

@@ -18,6 +18,7 @@ namespace CashRegister.Models
         public Receipt()
         {
             this.Transactions = new HashSet<Transaction>();
+            this.DiscountTransactions = new HashSet<DiscountTransaction>();
         }
     
         public int Id { get; set; }
@@ -27,5 +28,7 @@ namespace CashRegister.Models
         public virtual Register Register { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Transaction> Transactions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DiscountTransaction> DiscountTransactions { get; set; }
     }
 }

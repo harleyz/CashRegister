@@ -14,6 +14,22 @@ namespace CashRegister.Models
     
     public partial class Discount
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Discount()
+        {
+            this.DiscountTransactions = new HashSet<DiscountTransaction>();
+        }
+    
         public int Id { get; set; }
+        public string Code { get; set; }
+        public System.Guid SKU { get; set; }
+        public Nullable<int> Percent { get; set; }
+        public Nullable<int> BuyX { get; set; }
+        public Nullable<int> FreeY { get; set; }
+        public Nullable<int> ItemId { get; set; }
+    
+        public virtual Item Item { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DiscountTransaction> DiscountTransactions { get; set; }
     }
 }
