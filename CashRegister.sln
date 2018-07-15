@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashRegister", "CashRegister\CashRegister.csproj", "{C5C9576B-92B9-44F6-ADB7-68FA9E218D40}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CashRegisterDB", "C:\Users\harle\Documents\Visual Studio 2017\Projects\CashRegisterDB\CashRegisterDB.sqlproj", "{24B34332-0C5A-45CB-9A92-791D2F7961A2}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CashRegisterDB", "CashRegisterDB\CashRegisterDB.sqlproj", "{24B34332-0C5A-45CB-9A92-791D2F7961A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
