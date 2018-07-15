@@ -124,6 +124,7 @@
       <DependentUpon>Model.edmx</DependentUpon>
       <LastGenOutput>Model.cs</LastGenOutput>
     </Content>
+    <Content Include="OutputScreenshot\CashRegisterDBScreenshot.png" />
     <Content Include="OutputScreenshot\CashRegisterScreenshot.png" />
   </ItemGroup>
   <ItemGroup>
